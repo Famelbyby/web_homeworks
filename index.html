@@ -9,7 +9,9 @@
         <title>Questions</title>
         <link href="static/css/bootstrap.css" rel="stylesheet">
         <link href="static/my_css.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital@1&family=Roboto:ital,wght@0,500;1,900&display=swap" rel="stylesheet">
     </head>
 
 <body class="">
@@ -66,7 +68,16 @@
 
             <div class="col-8 temp">
                 <div class="questions">
-                    <div class="questions-title">Questions</div>
+                    <div class="row">
+                        <div class="questions-title col-6">Questions</div>
+                        <div class="col-3 sorting">
+                            <div class="m-3" style="display: inline;">Sorting by: </div>
+                            <select class="form-select" aria-label="Default select example" style="width: 100px; display: inline;">
+                                <option value="1">New</option>
+                                <option value="2">Rating</option>
+                              </select>
+                        </div>
+                    </div>
 
                     <div class="question">
                         <div class="row">
@@ -277,12 +288,6 @@
                         <a href="#">Alex ofcourse</a><br>
                         <a href="#">Stanislav3000</a><br>
                         <a href="#">Andrey Koreya</a>
-                    </div>
-                </div>
-                <div class="best_answers">
-                    <div class="answers_title">Best answers</div>
-                    <div class="answers">
-
                     </div>
                 </div>
             </div>
