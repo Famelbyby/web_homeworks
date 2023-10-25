@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto,f Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.84.0">
+        <title></title>
+        <link href="static/css/bootstrap.css" rel="stylesheet">
+        <link href="static/my_css.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital@1&family=Roboto:ital,wght@0,500;1,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    </head>
+
+<body class="d-flex flex-column h-100">
+        
+    <header class="bg-black">
+        <div class="row header">
+            <div class="col-1 ava">
+                <img src="images/acc.png" class="acc-img">   
+            </div>
+            <div class="col-1 links">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+                    <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                </svg>
+                <a href="login.html">Log in</a><br>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                </svg>
+                <a href="signup.html">Sign up</a>
+            </div>
+            <div class="col-8 command_string">
+                <form>
+                    <input type="text" class="searching" pattern="[A-Za-z0-9]{1, 30}" required placeholder="Введите запрос"><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      </svg></button>
+                </form>
+            </div>
+            <div class="col-1">
+                <img src="images/q_and_a.png" class="logo" alt="So sad(">
+            </div>
+        </div>  
+    </header>
+
+    <main>
+
+        <div class="add_info row">
+
+            <div class="col-8 temp">
+                <div class="ask_question">
+                    <div class="title">
+                        New question
+                    </div>
+                    <div class="form">
+
+                        <div class="mb-5">
+                            <label for="new_title" class="form-label">Title</label>
+                            <div class="alert alert-info" role="alert">
+                                Maximal length - 50
+                            </div>
+                            <input type="text" class="form-control is-valid" id="new_title" value="Am I a man?" autocomplete="off" maxlength="50">
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label for="new_question_text" class="form-label">Text</label>
+                            <div class="alert alert-info" role="alert">
+                                Maximal length - 250
+                            </div>
+                            <textarea class="form-control is-invalid" id="new_question_text" rows="3" autocomplete="off" placeholder="Your description" required maxlength="250"></textarea>
+                            <div class="invalid-feedback">
+                                Please describe your question
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label for="new_tags" class="form-label mb-3">Tags</label>
+                            <div id="new_tags">
+                                <div class="alert alert-info" role="alert">
+                                    Maximal length - 30
+                                </div>
+                                <div>
+                                    <input class="new_tag form-control is-valid" type="text" placeholder="Your tag" maxlength="30"><br>
+                                    <div class="valid-feedback mb-4">
+                                        Very nice!
+                                    </div>
+                                </div>
+                                <div>
+                                    <input class="new_tag form-control mb3 is-invalid" type="text" placeholder="Your tag" maxlength="30"><br>
+                                    <div class="invalid-feedback mb-4">
+                                        Enter a tag
+                                    </div>
+                                </div>
+                                <div>
+                                    <input class="new_tag form-control mb3 is-invalid" type="text" placeholder="Your tag" maxlength="30"><br>
+                                    <div class="invalid-feedback mb-4">
+                                        Enter a tag
+                                    </div>
+                                </div>
+                                <div>
+                                    <input class="new_tag form-control mb4 is-valid" type="text" placeholder="Your tag" maxlength="30"><br>
+                                    <div class="valid-feedback mb-4">
+                                        Very nice!
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="button">Add tag</button>
+                        </div>
+
+                        <div class="mb-5 successing">
+                            <button type="submit" class="btn btn-success">Ask</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    
+            <div class="col-4 const">
+                <div class="popular_tags">Popular tags</div>
+                <div class="pop_tags">
+                    <span style="background-color: aqua;"><a href="#">VK Education</span></a>
+                    <span style="background-color: crimson;"><a href="#">Google</span></a>
+                    <span style="background-color: blueviolet;"><a href="#">Ferrari</span></a>
+                    <span style="background-color: greenyellow;"><a href="#">The smartest people ever</span></a>
+                    <span style="background-color: gold;"><a href="#">Bauman Military</span></a>
+                    <span style="background-color: dodgerblue;"><a href="#">Cute girls</span></a>
+                    <span style="background-color: fuchsia;"><a href="#">Strong men</span></a>
+                    <span style="background-color: mediumslateblue;"><a href="#">Cars</span></a>
+                </div>
+                <div class="best_members">
+                    <div class="members_title">Best members</div>
+                    <div class="members">
+                        <a href="#">Alex ofcourse</a><br>
+                        <a href="#">Stanislav3000</a><br>
+                        <a href="#">Andrey Koreya</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+    </footer>
+</body>
+</html>
