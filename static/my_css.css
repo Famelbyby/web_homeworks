@@ -5,12 +5,9 @@
 .header {
     flex-shrink: 0;
     height: 200px;
-    min-width: 1500px;
 }
 
 .ava {
-    margin: 10px 10px;
-    width: 110px;
     color: aliceblue;
 }
 
@@ -27,8 +24,9 @@
 }
 
 .links{
-    width: 140px;
+    width: 160px;
     margin-top: 15px;
+    margin-left: 10px;
     color: white;
     line-height: 25px;
 }
