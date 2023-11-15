@@ -1,0 +1,90 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.84.0">
+        <title>Questions</title>
+        <link href="{% static '/css/bootstrap.css' %}" rel="stylesheet">
+        <link href=" {% static '/my_css.css' %} " rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital@1&family=Roboto:ital,wght@0,500;1,900&display=swap" rel="stylesheet">
+    </head>
+
+<body class="">
+
+    <header class="bg-black">
+        <div class="row header">
+
+            {% if isLogIn %}
+
+            {% include '../components/loginFuncList.html' %}
+
+            {% else %}
+
+            {% include '../components/logoutFuncList.html' %}
+
+            {% endif %}
+
+            <div class="col-7 command_string">
+                <form>
+                    <input type="text" class="searching" pattern="[A-Za-z0-9]{1, 30}" required placeholder="Введите запрос"><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      </svg></button>
+                </form>
+                <a href="{% url 'ask' %}"><button type="button" id="ask_question">Ask!</button></a>
+            </div>
+            <div class="col-1">
+                <a href="/">
+                    <img src=" {% static '/images/q_and_a.png' %} " class="logo" alt="So sad(">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <div class="add_info row">
+
+            {% block content %}
+
+            {% endblock %}
+
+            <div class="col-4 const">
+                <div class="popular_tags">Popular tags</div>
+                <div class="pop_tags">
+                    <span style="background-color: aqua;"><a href="{% url 'tag' tag_name='fangixkfaso' %}">fangixkfaso</a></span>
+                    <span style="background-color: crimson;"><a href="{% url 'tag' tag_name='eeg' %}">eeg</a></span>
+                    <span style="background-color: blueviolet;"><a href="{% url 'tag' tag_name='ayfg' %}">ayfg</a></span>
+                    <span style="background-color: greenyellow;"><a href="{% url 'tag' tag_name='jwzl' %}">jwzl</a></span>
+                    <span style="background-color: gold;"><a href="{% url 'tag' tag_name='od' %}">od</a></span>
+                    <span style="background-color: dodgerblue;"><a href="{% url 'tag' tag_name='zcvmnwikuo' %}">zcvmnwikuo</a></span>
+                    <span style="background-color: fuchsia;"><a href="{% url 'tag' tag_name='slnex' %}">slnex</a></span>
+                    <span style="background-color: mediumslateblue;"><a href="{% url 'tag' tag_name='bmkvhxxpywry' %}">bmkvhxxpywry</a></span>
+                </div>
+                <div class="best_members">
+                    <div class="members_title">Best members</div>
+                    <div class="members">
+                        <a href="#">Alex ofcourse</a><br>
+                        <a href="#">Stanislav3000</a><br>
+                        <a href="#">Andrey Koreya</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">&#169;Alex Org.</span>
+    </div>
+    </footer>
+</body>
+</html>

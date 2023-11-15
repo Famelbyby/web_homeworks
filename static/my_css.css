@@ -4,7 +4,7 @@
 
 .header {
     flex-shrink: 0;
-    height: 200px;
+    height: 180px;
 }
 
 .ava {
@@ -45,7 +45,7 @@
     max-height: 160px;
     filter: invert(0%);
     border-radius: 50%;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .searching {
@@ -201,8 +201,9 @@ main {
 }
 
 .main_question .likes {
-    margin: 20px 0px 50px 48%;
+    margin: 20px 0px 50px 10%;
     transform: scale(2, 2);
+    text-align: center;
 }
 
 .main_question .question-title {
@@ -272,6 +273,27 @@ main {
     color: white;
 }
 
+button#ask_question {
+    border-radius: 2px;
+    background-color: green;
+    width: 100px;
+    margin-top: 60px;
+}
+
+.new_hot_q {
+    border-radius: 10px;
+    width: 50px;
+    height: 30px;
+    border: 1px solid darkblue;
+    transition-duration: 0.2s;
+    background-color: white;
+}
+
+.new_hot_q:hover {
+    background-color: darkblue;
+    color: white;
+}
+
 .ask_question {
     margin-left: 50px;
     width: 70%;
@@ -279,7 +301,7 @@ main {
 
 .ask_question .title {
     font-size: 58px;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
 }
 
 #new_question_text {

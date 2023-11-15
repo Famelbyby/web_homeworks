@@ -1,0 +1,52 @@
+<div class="login_title">
+    {{ title }}
+</div>
+<div class="form-floating mb-4">
+    <input type="text" class="form-control is-valid" id="floatingInput" placeholder="Login" value="Animeshnik" autocomplete="off" maxlength="20">
+    <label for="floatingInput">Login</label>
+    <div class="valid-feedback">
+        Well!
+    </div>
+</div>
+{% if email %}
+<div class="form-floating mb-4">
+    <input type="email" class="form-control is-valid" id="floatingInputEmail" placeholder="Login" value="animeshnik12@gmail.com" autocomplete="off">
+    <label for="floatingInputEmail">Email</label>
+    <div class="valid-feedback">
+        Well!
+    </div>
+</div>
+{% endif %}
+<div class="form-floating mb-5">
+    <input type="password" class="form-control is-invalid" id="floatingPassword" placeholder="Password" autocomplete="off" maxlength="30">
+    <label for="floatingPassword">Password</label>
+    <div class="invalid-feedback">
+        Incorrect password
+    </div>
+</div>
+{% if repeat_password %}
+<div class="form-floating mb-4">
+    <input type="password" class="form-control is-invalid" id="floatingRepeatingPassword" placeholder="Password" autocomplete="off" maxlength="30">
+    <label for="floatingRepeatingPassword">Repeat password</label>
+    <div class="invalid-feedback">
+        Password mismatch
+    </div>
+</div>
+{% endif %}
+{% if choose_file %}
+<div class="mb-5">
+    <label for="formFileMultiple" class="form-label">Upload avatar</label>
+    <input class="form-control is-invalid" type="file" id="formFileMultiple" multiple accept="image/jpeg">
+    <div class="invalid-feedback">
+        Файл не выбран
+    </div>
+</div>
+{% endif %}
+<div class="mb-4">
+    <button type="submit" class="btn btn-success">{{ operation }}</button>
+</div>
+<div>
+    <a href="{% url link_to %}">
+        {{ another_way }}
+    </a>
+</div>

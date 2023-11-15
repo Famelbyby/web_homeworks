@@ -1,0 +1,87 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col-8 temp">
+
+    <div class="main_question row">
+        <div class="col-3">
+            <img src="{% static '/images/acc.png' %}" alt="Avatar" class="avatar">
+            <div class="likes">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle minus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                </svg>
+                {{ question.rating }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                </svg>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row question-title">
+                {{ question.title }}
+            </div>
+            <div class="row question-text">
+                {{ question.description }}
+            </div>
+            <div class="row tags">
+                <div class="col-12">
+                    Tags:
+                    {% for t in tags %}
+                        <a href="{% url 'tag' tag_name=t %}">{{ t }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="answers">
+
+        <div class="my_answer">
+            <div class="my_text">
+                <textarea placeholder="Enter your answer here"></textarea>
+            </div>
+            <div>
+                <button type="submit">Answer</button>
+            </div>
+        </div>
+
+        {% for answer_item in answers %}
+
+        <div class="answer">
+            <div class="row">
+                <div class="col-2" style="text-align: center;">
+                    {% include 'components/likes.html' with rating=answer_item.rating %}
+                </div>
+                <div class="col-10">
+                    <div class="row">
+                        {{ answer_item.author }}
+                    </div>
+                    <div class="row">
+                        <div class="explain">
+                            {{ answer_item.description }}
+                         </div>
+                    </div>
+                    <div class="row helping">
+                        <span>Thanks for help!</span>
+                    </div>
+                    <div class="row helping">
+                        <span>Was this answer helpful?</span>
+                        <span class="yes">Yes</span>
+                        <span class="no">No</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+
+    {% include 'components/paginatePages.html' %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load filters %}
+
+{% block content %}
+<div class="col-8 temp">
+    <div class="questions">
+        <div class="row">
+            <div class="questions-title col-5">
+                {% if sort_by == 'hot' %}
+                    Hot questions
+                {% elif sort_by == 'new' %}
+                    New questions
+                {% else %}
+                    Tag: {{ tag_name }}
+                {% endif %}
+            </div>
+            {% if sort_by != 'tag' %}
+            <div class="col-4 sorting">
+                <div class="m-3" style="display: inline;">Choose</div>
+                {% if sort_by == 'hot' %}
+                <a href="{% url 'index' %}"><button type="button" class="new_hot_q">New</button></a>
+                {% elif sort_by == 'new' %}
+                <a href="{% url 'hot' %}"><button type="button" class="new_hot_q">Hot</button></a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% for question in questions %}
+
+        <div class="question">
+            <div class="row">
+                <div class="col-2" style="text-align: center;">
+                    {% include 'components/likes.html' with rating=question.rating %}
+                </div>
+                <div class="col-10">
+                    <a href="{% url 'question_to_go' question_id=question.question_id %}" class="question-title"> {{ question.title }} </a>
+                    <div class="descrip">
+                        {{ question.description }}
+                    </div>
+                    <div class="tags row">
+                        <div class="col">
+                            Answers({{answers|index:forloop.counter0}})
+                        </div>
+                        <div class="col">
+                            Tags({{ tags|index:forloop.counter0|length }}):
+                            {% for t in tags|index:forloop.counter0 %}
+                                <a href="{% url 'tag' tag_name=t %}">{{ t }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+
+        {% include 'components/paginatePages.html' %}
+
+    </div>
+</div>
+{% endblock %}

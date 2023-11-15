@@ -1,0 +1,11 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<div class="col-8 temp">
+    <div class="login">
+        {% include 'components/loginForms.html' with title='Sign up' operation='Sign up' another_way='Log in' email=True repeat_password=True choose_file=True link_to='login'%}
+    </div>
+</div>
+
+{% endblock %}
