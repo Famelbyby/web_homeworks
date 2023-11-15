@@ -33,22 +33,22 @@
         <div class="question">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with rating=question.rating %}
+                    {% include 'components/likes.html' %}
                 </div>
                 <div class="col-10">
-                    <a href="{% url 'question_to_go' question_id=question.question_id %}" class="question-title"> {{ question.title }} </a>
+                    <a href="{% url 'question_to_go' question_id=question.question_id %}" class="question-title">{{question.title}}</a>
                     <div class="descrip">
-                        {{ question.description }}
+                        {{question.description}}
                     </div>
                     <div class="tags row">
                         <div class="col">
-                            Answers({{answers|index:forloop.counter0}})
+                            Answers({{question.answers}})
                         </div>
                         <div class="col">
-                            Tags({{ tags|index:forloop.counter0|length }}):
-                            {% for t in tags|index:forloop.counter0 %}
-                                <a href="{% url 'tag' tag_name=t %}">{{ t }}</a>
-                            {% endfor %}
+                            Tags(3):
+                            <a href="{% url 'tag' tag_name='Crying' %}">Crying</a>
+                            <a href="{% url 'tag' tag_name='Bad friends' %}">Bad friends</a>
+                            <a href="{% url 'tag' tag_name='Alone' %}">Alone</a>
                         </div>
                     </div>
                 </div>

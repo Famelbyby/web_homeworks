@@ -13,7 +13,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle minus" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
                 </svg>
-                {{ question.rating }}
+                12
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
                 </svg>
@@ -21,17 +21,17 @@
         </div>
         <div class="col-8">
             <div class="row question-title">
-                {{ question.title }}
+                What do you think: is a pink colour for men?
             </div>
             <div class="row question-text">
-                {{ question.description }}
+                My friends laugh at me, because I like pink... Help me...
             </div>
             <div class="row tags">
                 <div class="col-12">
-                    Tags:
-                    {% for t in tags %}
-                        <a href="{% url 'tag' tag_name=t %}">{{ t }}</a>
-                    {% endfor %}
+                    Tags(3):
+                    <a href="{% url 'tag' tag_name='Crying' %}">Crying</a>
+                    <a href="{% url 'tag' tag_name='Bad friends' %}">Bad friends</a>
+                    <a href="{% url 'tag' tag_name='Alone' %}">Alone</a>
                 </div>
             </div>
         </div>
@@ -54,15 +54,15 @@
         <div class="answer">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with rating=answer_item.rating %}
+                    {% include 'components/likes.html' %}
                 </div>
                 <div class="col-10">
                     <div class="row">
-                        {{ answer_item.author }}
+                        Gangsta
                     </div>
                     <div class="row">
                         <div class="explain">
-                            {{ answer_item.description }}
+                            Don't pay them attention, you are very cute!!!
                          </div>
                     </div>
                     <div class="row helping">

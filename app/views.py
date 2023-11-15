@@ -1,31 +1,65 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
-from app import settings
-
 
 # Create your views here.
 
+QUESTIONS_PER_PAGE = 20
+ANSWERS_PER_PAGE = 30
+
+QUESTIONS = [
+    {'title': 'What do you think: is a pink colour for men?',
+     'description': 'My friends laugh at me, because I like pink... Help me...',
+     'answers': 5,
+     'question_id': i + 1}
+    for i in range(100)
+]
+
+ANSWERS = [
+    {'title': 'What do you think: is a pink colour for men?',
+     'description': 'My friends laugh at me, because I like pink... Help me...',
+     'answers': 5,
+     'question_id': i + 1}
+    for i in range(120)
+]
+
+
+def paginate(objects, que_per_page, page):
+    pages = Paginator(objects, que_per_page)
+    return pages.get_page(page)
+
 
 def index(request):
-    context = settings.paginate(request, 'index')
-    if context['page'] == -1:
-        return HttpResponseNotFound('404 Error')
-    return render(request, 'index.html', context)
+    try:
+        page = int(request.GET.get('page', 1))
+    except:
+        return HttpResponseNotFound('Bad request')
+    if page > len(QUESTIONS) / QUESTIONS_PER_PAGE or page < 1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'index.html', {'questions': paginate(QUESTIONS, QUESTIONS_PER_PAGE, page), 'isLogIn': False,
+                                          'pages': range(1, 6), 'sort_by': 'new'})
 
 
 def hot(request):
-    context = settings.paginate(request, 'hot')
-    if context['page'] == -1:
-        return HttpResponseNotFound('404 Error')
-    return render(request, 'index.html', context)
+    try:
+        page = int(request.GET.get('page', 1))
+    except:
+        return HttpResponseNotFound('Bad request')
+    if page > len(QUESTIONS) / QUESTIONS_PER_PAGE or page < 1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'index.html', {'questions': paginate(QUESTIONS, QUESTIONS_PER_PAGE, page), 'isLogIn': False,
+                                          'pages': range(1, 6), 'sort_by': 'hot'})
 
 
 def tag(request, tag_name):
-    context = settings.paginate(request, 'tag', tag_name)
-    if context['page'] == -1:
+    try:
+        page = int(request.GET.get('page', 1))
+    except:
         return HttpResponseNotFound('Bad request')
-    return render(request, 'index.html', context)
+    if page > len(QUESTIONS) / QUESTIONS_PER_PAGE or page < 1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'index.html', {'questions': paginate(QUESTIONS, QUESTIONS_PER_PAGE, page), 'isLogIn': True,
+                                          'pages': range(1, 6), 'sort_by': 'tag', 'tag_name': tag_name})
 
 
 def login(request):
@@ -33,10 +67,14 @@ def login(request):
 
 
 def question(request, question_id):
-    context = settings.certain_question(request, question_id)
-    if context['page'] == -1:
+    try:
+        page = int(request.GET.get('page', 1))
+    except:
         return HttpResponseNotFound('Bad request')
-    return render(request, 'question.html', context)
+    if page > len(ANSWERS) / ANSWERS_PER_PAGE or page < 1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'question.html', {'answers': paginate(ANSWERS, ANSWERS_PER_PAGE, page), 'isLogIn': True,
+                                             'pages': range(1, 5)})
 
 
 def signup(request):
