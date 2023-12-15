@@ -13,6 +13,7 @@ from app import settings
 
 @login_required(login_url='login', redirect_field_name='continue')
 def index(request):
+    print(request.user.profile)
     context = settings.paginate(request, 'index')
     if context['page'] == -1:
         return HttpResponseNotFound('404 Error')
@@ -105,8 +106,11 @@ def profile(request, profile_id):
 @csrf_protect
 @login_required(login_url='login', redirect_field_name='continue')
 def profile_edit(request):
-    context = settings.profile_edit(request)
-    return render(request, 'profile_edit.html', {'form': context})
+    if request.method == 'GET':
+        context = settings.profile_edit(request)
+        return render(request, 'profile_edit.html', {'form': context})
+    #settings.profile_edit(request)
+    #return redirect(reverse('profile', kwargs=request.user.profile.id))
 
 
 @csrf_protect

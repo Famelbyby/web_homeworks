@@ -92,7 +92,7 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    description = models.TextField()
+    description = models.CharField()
     date = models.DateField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE, blank=True, null=True)
     author = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, blank=True, null=True)

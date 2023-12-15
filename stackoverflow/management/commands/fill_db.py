@@ -25,10 +25,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ratio = options['ratio'][0]
+        for q in Question.objects.all():
+            if q.tags.count() == 0:
+                q.delete()
+        return
         print('Generate users?')
         if input() == 'yes':
-            for i in range(1, ratio + 1):
-                u = User.objects.create_user(username=get_rand_str(4, 7),
+            for i in range(9957, ratio + 1):
+                u = User.objects.create_user(username=get_rand_str(5, 9),
                                              password=get_rand_str(5, 7),
                                              email=get_rand_str(3, 4) + '@gmail.com',
                                              first_name=get_rand_str(2, 4, False),
@@ -39,7 +43,7 @@ class Command(BaseCommand):
         print('Generate tags?')
         if input() == 'yes':
             for i in range(1, ratio + 1):
-                Tag.objects.create(tag_name=get_rand_str(2, 4, False))
+                Tag.objects.create(tag_name=get_rand_str(1, 4, False))
             print('Created tags')
         print('Generate questions?')
         if input() == 'yes':
@@ -62,13 +66,13 @@ class Command(BaseCommand):
         if input() == 'yes':
             questions = Question.objects.all()
             profiles = Profile.objects.all()
-            for i in range(1, ratio * 100 + 1):
+            for i in range(164949, ratio * 100 + 1):
                 if i % 10000 == 0:
                     print(i)
                 Answer.objects.create(description=get_rand_str(2, 6, True, True),
                                       date=timezone.now(),
-                                      question_id=questions[i % ratio],
-                                      author_id=profiles[i % ratio],
+                                      question=questions[i % ratio],
+                                      author=profiles[i % ratio],
                                       rating=0
                                       )
             print('Created answers')

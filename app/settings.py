@@ -47,7 +47,7 @@ def paginate(request, typeRequest, tag_name='null'):
     answers = list(q.answer_set.count() for q in questions)
     return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
             'pages': pages_range(page, (Question.objects.count() + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
-            'sort_by': SORT_BY[typeRequest], 'isLogIn': False, 'tag_name': tag_name}
+            'sort_by': SORT_BY[typeRequest], 'tag_name': tag_name}
 
 
 def index_questions(page):
@@ -100,7 +100,7 @@ def login_user(request):
 
 def signup(request):
     if request.method == 'POST':
-        return RegisterForm(request.POST)
+        return RegisterForm(request.POST, request.FILES)
     return RegisterForm()
 
 
@@ -123,6 +123,19 @@ def profile(request, profile_id):
 
 
 def profile_edit(request):
+    #if request.method == 'POST':
+    #   form = EditForm(request.POST, request.FILES, instance=request.user)
+    #   if form.is_valid():
+    #       first_name = form.cleaned_data.get('first_name')
+    #       last_name = form.cleaned_data.get('last_name')
+    #       avatar = form.cleaned_data.get('avatar')
+    #       user = request.user
+    #       profile = user.profile
+    #       user.first_name = first_name
+    #       user.last_name = last_name
+    #       user.save()
+    #       print(avatar)
+    #       return
     return EditForm()
 
 
