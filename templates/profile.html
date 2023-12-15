@@ -2,3 +2,51 @@
 
 {% load static %}
 {% load django_bootstrap5 %}
+
+{% block content %}
+<div class="col-8 temp">
+    <div class="profile">
+        <div class="row mb-5">
+            <div class="col-3">
+                <img src="{% static 'images/acc.png' %}" class="profile-img">
+            </div>
+            {% if request.user.profile != profile %}
+            <form method="post" class="col-3">
+            {% csrf_token %}
+            {% if isFollowed %}
+                <div class="col-3">
+                    <button type="submit" class="btn btn-danger">Unfollow</button>
+                </div>
+                {% else %}
+                <div class="col-3">
+                    <button type="submit" class="btn btn-success">Follow</button>
+                </div>
+            {% endif %}
+            </form>
+            {% endif %}
+        </div>
+        <div class="form-floating mb-4">
+            <input type="text" class="form-control" id="floatingInput" value="{{profile.user.username}}" maxlength="20" disabled>
+            <label for="floatingInput">Username</label>
+        </div>
+        <div class="form-floating mb-4">
+            <input type="text" class="form-control" id="floatingEmail" value="{{profile.user.email}}" maxlength="20" disabled>
+            <label for="floatingEmail">Email</label>
+        </div>
+        <div class="form-floating mb-4">
+            <input type="text" class="form-control" id="floatingFirstName" value="{{profile.user.first_name}}" maxlength="20" disabled>
+            <label for="floatingFirstName">First name</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="floatingLastName" value="{{profile.user.last_name}}" maxlength="20" disabled>
+            <label for="floatingLastName">Last name</label>
+        </div>
+        {% if request.user.profile == profile %}
+        <div class="col-5 mb-4">
+            <a href="{% url 'profile_edit' %}"><button type="button" class="btn btn-success">Edit</button></a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

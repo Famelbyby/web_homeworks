@@ -8,24 +8,8 @@
     <div class="questions">
         <div class="row">
             <div class="questions-title col-5">
-                {% if sort_by == 'hot' %}
-                    Hot questions
-                {% elif sort_by == 'new' %}
-                    New questions
-                {% else %}
-                    Tag: {{ tag_name }}
-                {% endif %}
+                My questions
             </div>
-            {% if sort_by != 'tag' %}
-            <div class="col-4 sorting">
-                <div class="m-3" style="display: inline;">Choose</div>
-                {% if sort_by == 'hot' %}
-                <a href="{% url 'index' %}"><button type="button" class="new_hot_q">New</button></a>
-                {% elif sort_by == 'new' %}
-                <a href="{% url 'hot' %}"><button type="button" class="new_hot_q">Hot</button></a>
-                {% endif %}
-            </div>
-            {% endif %}
         </div>
 
         {% for question in questions %}
@@ -33,7 +17,7 @@
         <div class="question">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with profile=question.author_id rating=question.rating %}
+                    {% include 'components/likes.html' with profile=request.user.profile rating=question.rating %}
                 </div>
                 <div class="col-10">
                     <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>

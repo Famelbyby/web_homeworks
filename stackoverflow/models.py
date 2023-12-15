@@ -7,16 +7,13 @@ from django.db.models import Count, Sum
 
 class ProfileQuerySet(models.QuerySet):
 
-    def addFollow(self, user_whome, user_who):
+    def toggleFollow(self, user_whome, profile_who_id):
+        profile_who = self.get(pk=profile_who_id)
         profile = self.get(user=user_whome)
-        if profile.follows.filter(user=user_who).count() == 0:
-            profile_who = Profile.objects.get(user=user_who)
+        if profile.follows.filter(user=profile_who.user).count() > 0:
+            profile.follows.remove(profile_who)
+        else:
             profile.follows.add(profile_who)
-
-    def deleteFollow(self, user_whome, user_who):
-        profile = self.get(user=user_whome)
-        if profile.follows.filter(user=user_who).count() > 0:
-            profile.follows.get(user=user_who).delete()
 
 
 class ProfileManager(models.Manager):
@@ -24,11 +21,8 @@ class ProfileManager(models.Manager):
     def get_query_set(self):
         return ProfileQuerySet(self.model, using=self._db)
 
-    def addFollow(self, user_whome, user_who):
-        self.get_query_set().addFollow(user_whome, user_who)
-
-    def deleteFollow(self, user_whome, user_who):
-        self.get_query_set().deleteFollow(user_whome, user_who)
+    def toggleFollow(self, user_whome, profile_who_id):
+        return self.get_query_set().toggleFollow(user_whome, profile_who_id)
 
 
 class Profile(models.Model):

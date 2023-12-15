@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="col-8 temp">
+    <div class="answers">
+        <div class="row">
+            <div class="questions-title col-5">
+                My answers
+            </div>
+        </div>
+        {% for answer_item in answers %}
+        <div class="answer" id="{{answer_item.id}}">
+            <div class="row">
+                <div class="col-2" style="text-align: center;">
+                    {% include 'components/likes.html' with profile=request.user.profile rating=answer_item.rating %}
+                </div>
+                <div class="col-10">
+                    <div class="row">
+                        {{ answer_item.author }}
+                    </div>
+                    <div class="row">
+                        <div class="explain">
+                            <a href="{% url 'question' question_id=answer_item.question.id %}#{{answer_item.id}}">{{ answer_item.description }}</a>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% include 'components/paginatePages.html' %}
+</div>
+
+{% endblock %}

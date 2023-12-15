@@ -1,0 +1,45 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="col-8 temp">
+    <div class="answers">
+        <div class="row">
+            <div class="questions-title col-5">
+                My follows
+            </div>
+        </div>
+        {% for follow in follows %}
+        <div class="follow">
+            <div class="row">
+                <div class="row mb-5">
+                    <div class="image col-3">
+                        <a href="{% url 'profile' profile_id=follow.id %}"><img src="{% static 'images/acc.png' %}" class="profile-img"></a>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success">Follow</button>
+                    </div>
+                </div>
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control" id="floatingInput" value="{{follow.user.username}}" maxlength="20" disabled>
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control" id="floatingFirstName" value="{{follow.user.first_name}}" maxlength="20" disabled>
+                <label for="floatingFirstName">First name</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="floatingLastName" value="{{follow.user.last_name}}" maxlength="20" disabled>
+                <label for="floatingLastName">Last name</label>
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% include 'components/paginatePages.html' %}
+</div>
+
+{% endblock %}

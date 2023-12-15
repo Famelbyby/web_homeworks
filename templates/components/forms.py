@@ -87,12 +87,15 @@ class AskQuestion(forms.ModelForm):
         date = timezone.now()
         question = Question.objects.create(title=title, description=description, date=date)
         for t in tags:
-            question.tags.add(t)
+            try:
+                question.tags.add(Tag.objects.get(tag_name=t))
+            except:
+                question.tags.add(Tag.objects.create(tag_name=t))
         return question
 
 
 class GiveAnswer(forms.ModelForm):
-    description = forms.CharField(required=True)
+    description = forms.Textarea()
 
     class Meta:
         model = Answer
@@ -100,5 +103,5 @@ class GiveAnswer(forms.ModelForm):
 
     def save(self, **kwargs):
         description = self.cleaned_data.get('description')
-        answer = Answer.objects.create(description=description)
+        answer = Answer.objects.create(description=description, date=timezone.now())
         return answer

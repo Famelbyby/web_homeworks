@@ -295,6 +295,19 @@ button#ask_question {
     margin-top: 40px;
 }
 
+.profile {
+    margin: 60px 60px 20px 60px;
+}
+
+.profile button {
+    margin: 80px 0px 0px 20px;
+}
+
+.profile-img {
+    width: 150px;
+    height: 150px;
+}
+
 .new_hot_q {
     border-radius: 10px;
     width: 50px;

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
 
 from app import settings
@@ -49,10 +50,15 @@ def log_in(request):
 @csrf_protect
 @login_required(login_url='login', redirect_field_name='continue')
 def question(request, question_id):
-    context = settings.certain_question(request, question_id)
-    if context['page'] == -1:
-        return HttpResponseNotFound('Bad request')
-    return render(request, 'question.html', context)
+    if request.method == 'GET':
+        context = settings.certain_question(request, question_id)
+        if context['page'] == -1:
+            return HttpResponseNotFound('Bad request')
+        context['form'] = settings.give_answer(request, question_id)
+        return render(request, 'question.html', context)
+    [count, answer_id] = settings.give_answer(request, question_id)
+    return redirect(reverse('question', kwargs={'question_id': question_id}) +
+                    '?page=' + str(count) + '#' + str(answer_id))
 
 
 @csrf_protect
@@ -77,19 +83,23 @@ def ask(request):
     form = settings.ask(request)
     if request.method == 'POST' and form.is_valid():
         question = form.save()
+        question.date = timezone.now()
         question.author_id = request.user.profile
         question.save()
-        return redirect(reverse('question', kwargs=question.question_id))
+        return redirect(reverse('question', kwargs={'question_id': question.id}))
     return render(request, 'ask.html', {'form': form})
 
 
 @csrf_protect
 @login_required(login_url='login', redirect_field_name='continue')
 def profile(request, profile_id):
-    context = settings.profile(request, profile_id)
-    if context['page'] == -1:
-        return HttpResponseNotFound('Bad request')
-    return render(request, 'profile.html', context)
+    if request.method == 'POST':
+        settings.follow(request, profile_id)
+        return redirect(request.META.get('HTTP_REFERER'))
+    [context, isFollowed] = settings.profile(request, profile_id)
+    if context == -1:
+        return HttpResponseNotFound('404 Not found')
+    return render(request, 'profile.html', {'profile': context, 'isFollowed': isFollowed})
 
 
 @csrf_protect
@@ -110,6 +120,8 @@ def follows(request):
 @login_required(login_url='login', redirect_field_name='continue')
 def my_questions(request):
     context = settings.my_questions(request)
+    if context['page'] == -1:
+        return HttpResponseNotFound('Bad request')
     return render(request, 'my_questions.html', context)
 
 

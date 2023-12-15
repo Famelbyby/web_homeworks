@@ -17,5 +17,5 @@ urlpatterns = [
     path('profile/edit', views.profile_edit, name='profile_edit'),
     path('my_answers', views.my_answers, name='my_answers'),
     path('my_questions', views.my_questions, name='my_questions'),
-    path('follows', views.follows, name='follows')
+    path('follows', views.follows, name='follows'),
 ]
