@@ -1,5 +1,8 @@
-from database_stackoverflow.models import Profile, Question, Tag, Answer
+from django.contrib.auth import authenticate, login
+
+from stackoverflow.models import Profile, Question, Tag, Answer
 from django.db.models import Count
+from templates.components.forms import LoginForm, RegisterForm, AskQuestion, EditForm
 
 QUESTIONS_PER_PAGE = 20
 ANSWERS_PER_PAGE = 7
@@ -39,8 +42,6 @@ def paginate(request, typeRequest, tag_name='null'):
         questions = hot_questions(page)
     else:
         questions = tag_questions(page, tag_name)
-    if not len(questions):
-        return {'page': -1}
     tags = [list(q.tags.all()) for q in questions]
     answers = list(q.answer_set.count() for q in questions)
     return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
@@ -65,7 +66,7 @@ def certain_question(request, question_id):
     if page == -1:
         return {'page': -1}
     try:
-        question = Question.objects.get(question_id=question_id)
+        question = Question.objects.get(pk=question_id)
     except:
         return {'page': -1}
     tags = question.tags.all()
@@ -73,4 +74,28 @@ def certain_question(request, question_id):
     if not len(answers):
         return {'page': -1}
     return {'question': question, 'tags': tags, 'answers': answers, 'page': page,
-            'pages': pages_range(page, (question.answer_set.count() + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE), 'isLogIn': True}
+            'pages': pages_range(page, (question.answer_set.count() + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE),
+            'isLogIn': True}
+
+
+# REWRITE WHAT ABOVE THIS
+def login_user(request):
+    if request.method == 'POST':
+        return LoginForm(request.POST)
+    return LoginForm()
+
+
+def signup(request):
+    if request.method == 'POST':
+        return RegisterForm(request.POST)
+    return RegisterForm()
+
+
+def ask(request):
+    if request.method == 'POST':
+        return AskQuestion(request.POST)
+    return AskQuestion()
+
+
+def profile_edit(request):
+    return EditForm()

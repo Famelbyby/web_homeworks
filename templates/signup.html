@@ -1,10 +1,17 @@
 {% extends 'layouts/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <div class="col-8 temp">
     <div class="login">
-        {% include 'components/loginForms.html' with title='Sign up' operation='Sign up' another_way='Log in' email=True repeat_password=True choose_file=True link_to='login'%}
+        <form method="post" class="mb-2">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-success">Sign up</button>
+        </form>
+        <a href="{% url 'login' %}"><button type="button" class="btn btn-success">Or log in</button></a>
     </div>
 </div>
 

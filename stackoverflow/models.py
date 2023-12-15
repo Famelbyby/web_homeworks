@@ -1,15 +1,42 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count, Sum, QuerySet
+from django.db.models import Count, Sum
 
 
 # Create your models here.
+
+class ProfileQuerySet(models.QuerySet):
+
+    def addFollow(self, user_whome, user_who):
+        profile = self.get(user=user_whome)
+        if profile.follows.filter(user=user_who).count() == 0:
+            profile_who = Profile.objects.get(user=user_who)
+            profile.follows.add(profile_who)
+
+    def deleteFollow(self, user_whome, user_who):
+        profile = self.get(user=user_whome)
+        if profile.follows.filter(user=user_who).count() > 0:
+            profile.follows.get(user=user_who).delete()
+
+
+class ProfileManager(models.Manager):
+
+    def get_query_set(self):
+        return ProfileQuerySet(self.model, using=self._db)
+
+    def addFollow(self, user_whome, user_who):
+        self.get_query_set().addFollow(user_whome, user_who)
+
+    def deleteFollow(self, user_whome, user_who):
+        self.get_query_set().deleteFollow(user_whome, user_who)
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(null=True, default='ava.png', blank=True)
     follows = models.ManyToManyField('Profile')
+
+    objects = ProfileManager()
 
     def __str__(self):
         return self.user.username
@@ -57,7 +84,6 @@ class QuestionManager(models.Manager):
 
 
 class Question(models.Model):
-    question_id = models.IntegerField(primary_key=True)
     title = models.TextField(max_length=30)
     description = models.TextField()
     date = models.DateField()
@@ -72,7 +98,6 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    answer_id = models.IntegerField(primary_key=True)
     description = models.TextField()
     date = models.DateField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE, blank=True, null=True)
@@ -83,11 +108,51 @@ class Answer(models.Model):
         return self.description
 
 
+class QuestionLikesQuerySet(models.QuerySet):
+
+    def toggleLike(self, user_id, question_id):
+        try:
+            self.get(user_id=user_id, question_id=question_id).delete()
+        except:
+            self.create(user_id=user_id, question_id=question_id)
+
+
+class QuestionLikesManager(models.Manager):
+
+    def get_query_set(self):
+        return QuestionLikesQuerySet(self.model, using=self._db)
+
+    def toggleLike(self, user_id, question_id):
+        self.get_query_set().toggleLike(user_id, question_id=question_id)
+
+
 class QuestionLikes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    objects = QuestionManager()
+
+
+class AnswerLikesQuerySet(models.QuerySet):
+
+    def toggleLike(self, user_id, question_id):
+        try:
+            self.get(user_id=user_id, question_id=question_id).delete()
+        except:
+            self.create(user_id=user_id, question_id=question_id)
+
+
+class AnswerLikesManager(models.Manager):
+
+    def get_query_set(self):
+        return AnswerLikesQuerySet(self.model, using=self._db)
+
+    def toggleLike(self, user_id, question_id):
+        self.get_query_set().toggleLike(user_id, question_id=question_id)
 
 
 class AnswerLikes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     answer_id = models.ForeignKey(Answer, on_delete=models.CASCADE)
+
+    objects = AnswerLikesManager()

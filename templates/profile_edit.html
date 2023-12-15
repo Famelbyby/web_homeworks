@@ -1,0 +1,21 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="temp col-8">
+    <div class="title_edit">
+        Edit your profile
+    </div>
+    <div class="form_edit">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+        <a href="{% url 'profile' profile_id=1 %}"><button type="button" class="btn btn-warning go_back">Go back</button></a>
+    </div>
+</div>
+
+{% endblock %}

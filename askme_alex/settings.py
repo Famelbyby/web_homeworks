@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'database_stackoverflow',
+    'stackoverflow',
     'app',
     'django_bootstrap5'
 ]
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'askme_alex.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'stackoverflow',
+        'NAME': 'db_stackoverflow',
         'USER': 'leshka',
         'PASSWORD': 'AleyMaley14-',
         'HOST': 'localhost',

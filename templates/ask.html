@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <div class="col-8 temp">
@@ -8,49 +10,11 @@
             New question
         </div>
         <div class="form">
-
-            <div class="mb-5">
-                <label for="new_title" class="form-label">Title</label>
-                <div class="alert alert-info" role="alert">
-                    Maximal length - 50
-                </div>
-                <input type="text" class="form-control is-valid" id="new_title" value="Am I a man?" autocomplete="off" maxlength="50">
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
-            </div>
-
-            <div class="mb-5">
-                <label for="new_question_text" class="form-label">Text</label>
-                <div class="alert alert-info" role="alert">
-                    Maximal length - 250
-                </div>
-                <textarea class="form-control is-invalid" id="new_question_text" rows="3" autocomplete="off" placeholder="Your description" required maxlength="250"></textarea>
-                <div class="invalid-feedback">
-                    Please describe your question
-                </div>
-            </div>
-
-            <div class="mb-5">
-                <label for="new_tags" class="form-label mb-3">Tags</label>
-                <div id="new_tags">
-                    <div class="alert alert-info" role="alert">
-                        Maximal length - 30
-                    </div>
-                    <div>
-                        <input class="new_tag form-control is-valid" type="text" placeholder="Your tag" maxlength="30"><br>
-                        <div class="valid-feedback mb-4">
-                            Very nice!
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-primary" type="button">Add tag</button>
-            </div>
-
-            <div class="mb-5 successing">
-                <button type="submit" class="btn btn-success">Ask</button>
-            </div>
-
+            <form method="post" class="mb-3">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-success">Ask!</button>
+            </form>
         </div>
     </div>
 </div>

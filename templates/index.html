@@ -36,7 +36,7 @@
                     {% include 'components/likes.html' with rating=question.rating %}
                 </div>
                 <div class="col-10">
-                    <a href="{% url 'question_to_go' question_id=question.question_id %}" class="question-title"> {{ question.title }} </a>
+                    <a href="{% url 'question' question_id=question.question_id %}" class="question-title"> {{ question.title }} </a>
                     <div class="descrip">
                         {{ question.description }}
                     </div>
