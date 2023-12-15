@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'database_stackoverflow',
-    'app'
+    'app',
+    'django_bootstrap5'
 ]
 
 MIDDLEWARE = [

@@ -57,7 +57,7 @@ def hot_questions(page):
 
 
 def tag_questions(page, tag_name):
-    return Tag.this_tag.isThisTag(tag_name).questions.all()[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+    return Tag.objects.isThisTag(tag_name).questions.all()[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
 
 
 def certain_question(request, question_id):

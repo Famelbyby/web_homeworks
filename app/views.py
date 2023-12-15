@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
 from app import settings
 
@@ -45,3 +44,31 @@ def signup(request):
 
 def ask(request):
     return render(request, 'ask.html', {'isLogIn': True})
+
+
+def profile(request, profile_id):
+    context = settings.profile(request, profile_id)
+    if context['page'] == -1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'profile.html', context)
+
+
+def profile_edit(request):
+    context = settings.profile_edit(request)
+    return render(request, 'profile_edit.html', context)
+
+
+def follows(request):
+    context = settings.follows(request)
+    return render(request, 'follows.html', context)
+
+
+def my_questions(request):
+    context = settings.my_questions(request)
+    return render(request, 'my_questions.html', context)
+
+
+def my_answers(request):
+    context = settings.my_answers(request)
+    return render(request, 'my_answers.html', context)
+
