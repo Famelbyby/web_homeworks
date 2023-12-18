@@ -1,14 +1,13 @@
 from django.contrib.auth import authenticate, login
+from django.forms import model_to_dict
 
-from stackoverflow.models import Profile, Question, Tag, Answer
+from stackoverflow.models import Profile, Question, Tag, Answer, AnswerLikes, QuestionLikes
 from django.db.models import Count
 from templates.components.forms import LoginForm, RegisterForm, AskQuestion, EditForm, GiveAnswer
 
 QUESTIONS_PER_PAGE = 20
 ANSWERS_PER_PAGE = 7
 PROFILE_PER_PAGE = 15
-
-SORT_BY = {'index': 'new', 'hot': 'hot', 'tag': 'tag'}
 
 
 def pages_range(page, pages_count):
@@ -33,33 +32,60 @@ def check_page(request):
     return page
 
 
-def paginate(request, typeRequest, tag_name='null'):
+def index_questions(request):
     page = check_page(request)
     if page == -1:
         return {'page': -1}
-    if typeRequest == 'index':
-        questions = index_questions(page)
-    elif typeRequest == 'hot':
-        questions = hot_questions(page)
-    else:
-        questions = tag_questions(page, tag_name)
+    all_ques = Question.objects.newer()
+    count_all_ques = all_ques.count()
+    questions = all_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
     tags = [list(q.tags.all()) for q in questions]
     answers = list(q.answer_set.count() for q in questions)
     return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
-            'pages': pages_range(page, (Question.objects.count() + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
-            'sort_by': SORT_BY[typeRequest], 'tag_name': tag_name}
+            'pages': pages_range(page, (count_all_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
+            'type_sort': 'New questions'}
 
 
-def index_questions(page):
-    return Question.objects.newer()[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+def hot_questions(request):
+    page = check_page(request)
+    if page == -1:
+        return {'page': -1}
+    all_ques = Question.objects.hot()
+    count_all_ques = all_ques.count()
+    questions = all_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+    tags = [list(q.tags.all()) for q in questions]
+    answers = list(q.answer_set.count() for q in questions)
+    return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
+            'pages': pages_range(page, (count_all_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
+            'type_sort': 'Hot questions'}
 
 
-def hot_questions(page):
-    return Question.objects.hot()[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+def tag_questions(request, tag_name):
+    page = check_page(request)
+    if page == -1:
+        return {'page': -1}
+    all_ques = Tag.objects.isThisTag(tag_name).questions.all()
+    count_all_ques = all_ques.count()
+    questions = all_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+    tags = [list(q.tags.all()) for q in questions]
+    answers = list(q.answer_set.count() for q in questions)
+    return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
+            'pages': pages_range(page, (count_all_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
+            'type_sort': f'Tag: {tag_name}'}
 
 
-def tag_questions(page, tag_name):
-    return Tag.objects.isThisTag(tag_name).questions.all()[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+def query_question(request, query_name):
+    page = check_page(request)
+    if page == -1:
+        return {'page': -1}
+    all_ques = Question.objects.filter(title__icontains=query_name)
+    count_ques = all_ques.count()
+    questions = all_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+    tags = [list(q.tags.all()) for q in questions]
+    answers = list(q.answer_set.count() for q in questions)
+    return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
+            'pages': pages_range(page, (count_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
+            'type_sort': f'Query: {query_name}'}
 
 
 def certain_question(request, question_id):
@@ -72,9 +98,11 @@ def certain_question(request, question_id):
         return {'page': -1}
     tags = question.tags.all()
     answers = question.answer_set.all()[(page - 1) * ANSWERS_PER_PAGE: page * ANSWERS_PER_PAGE]
+    can_banned = [request.user.profile == question.author_id and request.user.profile != a.author and
+                  AnswerLikes.objects.filter(user_id=request.user, answer_id=a).count() == 0 for a in answers]
     return {'question': question, 'tags': tags, 'answers': answers, 'page': page,
             'pages': pages_range(page, (question.answer_set.count() + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE),
-            'isLogIn': True}
+            'can_banned': can_banned}
 
 
 def give_answer(request, question_id):
@@ -91,7 +119,6 @@ def give_answer(request, question_id):
     return GiveAnswer()
 
 
-# REWRITE WHAT ABOVE THIS
 def login_user(request):
     if request.method == 'POST':
         return LoginForm(request.POST)
@@ -123,20 +150,11 @@ def profile(request, profile_id):
 
 
 def profile_edit(request):
-    #if request.method == 'POST':
-    #   form = EditForm(request.POST, request.FILES, instance=request.user)
-    #   if form.is_valid():
-    #       first_name = form.cleaned_data.get('first_name')
-    #       last_name = form.cleaned_data.get('last_name')
-    #       avatar = form.cleaned_data.get('avatar')
-    #       user = request.user
-    #       profile = user.profile
-    #       user.first_name = first_name
-    #       user.last_name = last_name
-    #       user.save()
-    #       print(avatar)
-    #       return
-    return EditForm()
+    if request.method == 'POST':
+        form = EditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+    return EditForm(initial=model_to_dict(request.user))
 
 
 def follow(request, profile_id):
@@ -147,29 +165,71 @@ def follows(request):
     page = check_page(request)
     if page == -1:
         return {'page': -1}
-    follows = Profile.objects.get(user=request.user).follows.all()[
-              (page - 1) * PROFILE_PER_PAGE: page * PROFILE_PER_PAGE]
-    return {'follows': follows, 'page': page,
-            'pages': pages_range(page, (Profile.objects.get(
-                user=request.user).follows.all().count() + PROFILE_PER_PAGE - 1) // PROFILE_PER_PAGE)}
+    all_follows = Profile.objects.get(user=request.user).follows.all()
+    count_follows = all_follows.count()
+    my_follows = all_follows[(page - 1) * PROFILE_PER_PAGE: page * PROFILE_PER_PAGE]
+    return {'follows': my_follows, 'page': page,
+            'pages': pages_range(page, (count_follows + PROFILE_PER_PAGE - 1) // PROFILE_PER_PAGE)}
 
 
 def my_questions(request):
     page = check_page(request)
     if page == -1:
         return {'page': -1}
-    questions = Question.objects.filter(author_id=request.user.profile)[(page - 1)
-                                                                        * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
+    my_ques = Question.objects.filter(author_id=request.user.profile)
+    count_my_ques = my_ques.count()
+    questions = my_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
     tags = [list(q.tags.all()) for q in questions]
     answers = list(q.answer_set.count() for q in questions)
     return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
-            'pages': pages_range(page, (Question.objects.count() + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE)}
+            'pages': pages_range(page, (count_my_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE)}
 
 
 def my_answers(request):
     page = check_page(request)
     if page == -1:
         return {'page': -1}
-    answers = Answer.objects.filter(author=request.user.profile)
+    my_ans = Answer.objects.filter(author=request.user.profile)
+    count_ans = my_ans.count()
+    answers = my_ans[(page - 1) * ANSWERS_PER_PAGE: page * ANSWERS_PER_PAGE]
     return {'answers': answers, 'page': page,
-            'pages': pages_range(page, (Answer.objects.count() + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE)}
+            'pages': pages_range(page, (count_ans + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE)}
+
+
+def like(request):
+    type_req = request.POST.get('type_req')
+    if type_req == 'answer':
+        answer_id = request.POST.get('answer_id')
+        answer = Answer.objects.get(pk=answer_id)
+        AnswerLikes.objects.toggleLike(request.user, answer)
+        answer.rating = AnswerLikes.objects.filter(answer_id=answer).count()
+        answer.save()
+        print(answer.rating)
+        return answer.rating
+    else:
+        question_id = request.POST.get('question_id')
+        print(question_id)
+        question = Question.objects.get(pk=question_id)
+        QuestionLikes.objects.toggleLike(request.user, question)
+        question.rating = QuestionLikes.objects.filter(question_id=question).count()
+        question.save()
+        print(question.id)
+        return question.rating
+
+
+def ban_answer(request):
+    if request.POST.get('type_req') == 'yes':
+        answer = Answer.objects.get(pk=request.POST.get('answer_id'))
+        AnswerLikes.objects.toggleLike(request.user, answer)
+        answer.rating = AnswerLikes.objects.filter(answer_id=answer).count()
+        answer.save()
+    else:
+        Answer.objects.get(pk=request.POST.get('answer_id')).delete()
+    return
+
+
+def delete_something(type_query, delete_id):
+    if type_query == 'answer':
+        Answer.objects.get(pk=delete_id).delete()
+    if type_query == 'question':
+        Question.objects.get(pk=delete_id).delete()

@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
@@ -13,8 +13,7 @@ from app import settings
 
 @login_required(login_url='login', redirect_field_name='continue')
 def index(request):
-    print(request.user.profile)
-    context = settings.paginate(request, 'index')
+    context = settings.index_questions(request)
     if context['page'] == -1:
         return HttpResponseNotFound('404 Error')
     return render(request, 'index.html', context)
@@ -22,7 +21,7 @@ def index(request):
 
 @login_required(login_url='login', redirect_field_name='continue')
 def hot(request):
-    context = settings.paginate(request, 'hot')
+    context = settings.hot_questions(request)
     if context['page'] == -1:
         return HttpResponseNotFound('404 Error')
     return render(request, 'index.html', context)
@@ -30,11 +29,18 @@ def hot(request):
 
 @login_required(login_url='login', redirect_field_name='continue')
 def tag(request, tag_name):
-    context = settings.paginate(request, 'tag', tag_name)
+    context = settings.tag_questions(request, tag_name)
     if context['page'] == -1:
         return HttpResponseNotFound('Bad request')
     return render(request, 'index.html', context)
 
+
+@login_required
+def query_question(request, query_name):
+    context = settings.query_question(request, query_name)
+    if context['page'] == -1:
+        return HttpResponseNotFound('Bad request')
+    return render(request, 'index.html', context)
 
 @csrf_protect
 def log_in(request):
@@ -109,8 +115,8 @@ def profile_edit(request):
     if request.method == 'GET':
         context = settings.profile_edit(request)
         return render(request, 'profile_edit.html', {'form': context})
-    #settings.profile_edit(request)
-    #return redirect(reverse('profile', kwargs=request.user.profile.id))
+    settings.profile_edit(request)
+    return redirect(reverse('profile', kwargs={'profile_id': request.user.profile.id}))
 
 
 @csrf_protect
@@ -134,3 +140,24 @@ def my_questions(request):
 def my_answers(request):
     context = settings.my_answers(request)
     return render(request, 'my_answers.html', context)
+
+
+@csrf_protect
+@login_required
+def like(request):
+    count = settings.like(request)
+    return JsonResponse({'count': str(count)})
+
+
+@csrf_protect
+@login_required
+def ban_answer(request):
+    settings.ban_answer(request)
+    return JsonResponse({})
+
+
+@csrf_protect
+@login_required
+def delete_something(request, type_query, delete_id):
+    settings.delete_something(type_query, delete_id)
+    return redirect(request.META.get('HTTP_REFERER'))

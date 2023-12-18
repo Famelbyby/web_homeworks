@@ -20,7 +20,14 @@
                 </div>
                 <div class="col-10">
                     <div class="row">
-                        {{ answer_item.author }}
+                        <div class="col-9">
+                            {{ answer_item.author }}
+                        </div>
+                        {% if request.user.profile == answer_item.author %}
+                        <a href="{% url 'delete_something' type_query='answer' delete_id=answer_item.id%}">
+                            <button type="submit" class="btn btn-danger delete_btn">Delete</button>
+                        </a>
+                        {% endif %}
                     </div>
                     <div class="row">
                         <div class="explain">

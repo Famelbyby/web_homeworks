@@ -20,8 +20,17 @@
                     {% include 'components/likes.html' with profile=request.user.profile rating=question.rating %}
                 </div>
                 <div class="col-10">
-                    <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>
-                    <div class="descrip">
+                    <div class="row">
+                        <div class="col-9">
+                        <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>
+                        </div>
+                        {% if request.user.profile == question.author_id %}
+                        <a href="{% url 'delete_something' type_query='question' delete_id=question.id%}">
+                            <button type="submit" class="btn btn-danger delete_btn">Delete</button>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="descrip mb-4">
                         {{ question.description }}
                     </div>
                     <div class="tags row">

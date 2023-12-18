@@ -8,20 +8,14 @@
     <div class="questions">
         <div class="row">
             <div class="questions-title col-5">
-                {% if sort_by == 'hot' %}
-                    Hot questions
-                {% elif sort_by == 'new' %}
-                    New questions
-                {% else %}
-                    Tag: {{ tag_name }}
-                {% endif %}
+                {{type_sort}}
             </div>
-            {% if sort_by != 'tag' %}
+            {% if type_sort == 'Hot questions' or type_sort == 'New questions' %}
             <div class="col-4 sorting">
                 <div class="m-3" style="display: inline;">Choose</div>
-                {% if sort_by == 'hot' %}
+                {% if type_sort == 'Hot questions' %}
                 <a href="{% url 'index' %}"><button type="button" class="new_hot_q">New</button></a>
-                {% elif sort_by == 'new' %}
+                {% else %}
                 <a href="{% url 'hot' %}"><button type="button" class="new_hot_q">Hot</button></a>
                 {% endif %}
             </div>
@@ -33,11 +27,34 @@
         <div class="question">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with profile=question.author_id rating=question.rating %}
+                    <a href="{% url 'profile' profile_id=question.author_id.id %}">
+                        {% if question.author_id.avatar %}
+                        <img src=" {{question.author_id.avatar.url}} " alt="Avatar" class="question-img">
+                        {% else %}
+                        <img src=" {{MEDIA_URL}}acc.png " alt="Avatar" class="question-img">
+                        {% endif %}
+                    </a><br>
+                    <div class="question_likes" data-id="{{question.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                        </svg><br>
+                        <span>{{ question.rating }}</span>
+                    </div>
                 </div>
                 <div class="col-10">
-                    <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>
-                    <div class="descrip">
+                    <div class="row">
+                        <div class="col-9">
+                        <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>
+                        </div>
+                        {% if request.user.profile == question.author_id %}
+                        <div class="col-3">
+                            <a href="{% url 'delete_something' type_query='question' delete_id=question.id%}">
+                                <button type="submit" class="btn btn-danger delete_btn">Delete</button>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="descrip mb-4">
                         {{ question.description }}
                     </div>
                     <div class="tags row">

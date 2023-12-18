@@ -70,6 +70,15 @@ class EditForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name']
 
+    def save(self, **kwargs):
+        user = super().save(**kwargs)
+        profile = user.profile
+        received_avatar = self.cleaned_data.get('avatar')
+        if received_avatar:
+            profile.avatar = received_avatar
+            profile.save()
+        return user
+
 
 class AskQuestion(forms.ModelForm):
     title = forms.CharField(min_length=3, max_length=30)

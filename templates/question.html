@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load django_bootstrap5 %}
+{% load filters %}
 
 {% block content %}
 
@@ -9,7 +10,13 @@
 
     <div class="main_question row">
         <div class="col-3">
-            <a href="{% url 'profile' profile_id=request.user.profile.id %}"><img src="{% static '/images/acc.png' %}" alt="Avatar" class="avatar"></a>
+            <a href="{% url 'profile' profile_id=question.author_id.id %}">
+            {% if question.author_id.avatar %}
+            <img src="{{question.author_id.avatar.url}}" alt="Avatar" class="profile-img">
+            {% else %}
+            <img src="{{MEDIA_URL}}acc.png" alt="Avatar" class="profile-img">
+            {% endif %}
+            </a>
             <div class="likes">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
@@ -51,22 +58,40 @@
         <div class="answer" id="{{answer_item.id}}">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with profile=answer_item.author rating=answer_item.rating %}
+                    <a href="{% url 'profile' profile_id=answer_item.author.id %}">
+                        {% if answer_item.author.avatar %}
+                        <img src=" {{answer_item.author.avatar.url}} " alt="Avatar" class="question-img">
+                        {% else %}
+                        <img src="../uploads/acc.png" alt="Avatar" class="question-img">
+                        {% endif %}
+                    </a><br>
+                    <div class="answer_likes" data-id="{{answer_item.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+                        </svg><br>
+                        <span>{{ answer_item.rating }}</span>
+                    </div>
                 </div>
                 <div class="col-10">
                     <div class="row">
-                        {{ answer_item.author }}
+                        <div class="col-9">
+                            {{ answer_item.author }}
+                        </div>
+                        {% if request.user.profile == answer_item.author %}
+                        <a href="{% url 'delete_something' type_query='answer' delete_id=answer_item.id%}">
+                            <button type="submit" class="btn btn-danger delete_btn">Delete</button>
+                        </a>
+                        {% endif %}
                     </div>
                     <div class="row">
                         <div class="explain">
                             {{ answer_item.description }}
                          </div>
                     </div>
-                    {% if request.user.profile == question.author_id and request.user.profile != answer_item.author %}
+                    {% if can_banned|index:forloop.counter0 %}
                     <div class="row helping">
-                        <span>Thanks for help!</span>
                     </div>
-                    <div class="row helping is_correct">
+                    <div class="row helping ban_answer" data-id="{{answer_item.id}}">
                         <span>Was this answer helpful?</span>
                         <span class="yes">Yes</span>
                         <span class="no">No</span>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
+from django.utils import timezone
 
 
 # Create your models here.
@@ -27,7 +28,7 @@ class ProfileManager(models.Manager):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(null=True, default='ava.png', blank=True)
+    avatar = models.ImageField(null=True, blank=True)
     follows = models.ManyToManyField('Profile')
 
     objects = ProfileManager()
@@ -80,7 +81,7 @@ class QuestionManager(models.Manager):
 class Question(models.Model):
     title = models.TextField(max_length=30)
     description = models.TextField()
-    date = models.DateField()
+    date = models.DateTimeField(default=timezone.now())
     rating = models.IntegerField(default=0)
     author_id = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     tags = models.ManyToManyField(Tag, related_name='questions')
@@ -93,7 +94,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     description = models.CharField()
-    date = models.DateField()
+    date = models.DateTimeField(default=timezone.now())
     question = models.ForeignKey(Question, on_delete=models.CASCADE, blank=True, null=True)
     author = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, blank=True, null=True)
     rating = models.IntegerField(default=0)
@@ -117,23 +118,23 @@ class QuestionLikesManager(models.Manager):
         return QuestionLikesQuerySet(self.model, using=self._db)
 
     def toggleLike(self, user_id, question_id):
-        self.get_query_set().toggleLike(user_id, question_id=question_id)
+        self.get_query_set().toggleLike(user_id, question_id)
 
 
 class QuestionLikes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
 
-    objects = QuestionManager()
+    objects = QuestionLikesManager()
 
 
 class AnswerLikesQuerySet(models.QuerySet):
 
-    def toggleLike(self, user_id, question_id):
+    def toggleLike(self, user_id, answer_id):
         try:
-            self.get(user_id=user_id, question_id=question_id).delete()
+            self.get(user_id=user_id, answer_id=answer_id).delete()
         except:
-            self.create(user_id=user_id, question_id=question_id)
+            self.create(user_id=user_id, answer_id=answer_id)
 
 
 class AnswerLikesManager(models.Manager):
@@ -141,8 +142,8 @@ class AnswerLikesManager(models.Manager):
     def get_query_set(self):
         return AnswerLikesQuerySet(self.model, using=self._db)
 
-    def toggleLike(self, user_id, question_id):
-        self.get_query_set().toggleLike(user_id, question_id=question_id)
+    def toggleLike(self, user_id, answer_id):
+        self.get_query_set().toggleLike(user_id, answer_id)
 
 
 class AnswerLikes(models.Model):

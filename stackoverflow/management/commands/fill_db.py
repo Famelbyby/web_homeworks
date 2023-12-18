@@ -25,13 +25,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ratio = options['ratio'][0]
-        for q in Question.objects.all():
-            if q.tags.count() == 0:
-                q.delete()
-        return
         print('Generate users?')
         if input() == 'yes':
-            for i in range(9957, ratio + 1):
+            for i in range(1, ratio + 1):
                 u = User.objects.create_user(username=get_rand_str(5, 9),
                                              password=get_rand_str(5, 7),
                                              email=get_rand_str(3, 4) + '@gmail.com',
@@ -66,7 +62,7 @@ class Command(BaseCommand):
         if input() == 'yes':
             questions = Question.objects.all()
             profiles = Profile.objects.all()
-            for i in range(164949, ratio * 100 + 1):
+            for i in range(1, ratio * 100 + 1):
                 if i % 10000 == 0:
                     print(i)
                 Answer.objects.create(description=get_rand_str(2, 6, True, True),
@@ -79,18 +75,35 @@ class Command(BaseCommand):
         print('Generate answerlikes?')
         if input() == 'yes':
             answers = Answer.objects.all()
-            profiles = User.objects.all()
-            for i in range(1, ratio * 150 + 1):
-                if i % 10000 == 0:
-                    print(i)
-                AnswerLikes.objects.toggleLike(user_id=profiles[i % ratio], answer_id=answers[i % ratio])
+            for u in User.objects.all():
+                for i in range(300):
+                    AnswerLikes.objects.toggleLike(user_id=u, answer_id=answers[i])
             print('Created answerlikes')
         print('Generate questionlikes?')
         if input() == 'yes':
             questions = Question.objects.all()
-            profiles = User.objects.all()
-            for i in range(1, ratio * 150 + 1):
-                if i % 10000 == 0:
-                    print(i)
-                QuestionLikes.objects.toggleLike(user_id=profiles[i % ratio], question_id=questions[i % ratio])
+            for u in User.objects.all():
+                for i in range(300):
+                    QuestionLikes.objects.toggleLike(user_id=u, question_id=questions[i])
             print('Created questionlikes')
+        print('Correct questions rating?')
+        if input() == 'yes':
+            for q in Question.objects.all():
+                q.rating = QuestionLikes.objects.filter(question_id=q).count()
+                q.save()
+            print('Ratings corrected')
+        print('Correct answers rating?')
+        if input() == 'yes':
+            for a in Answer.objects.all():
+                a.rating = AnswerLikes.objects.filter(answer_id=a).count()
+                a.save()
+            print('Ratings corrected')
+        print('Correct date?')
+        if input() == 'yes':
+            for a in Answer.objects.all():
+                a.date = timezone.now()
+                a.save()
+            for q in Question.objects.all():
+                q.date = timezone.now()
+                q.save()
+            print('All corrected')

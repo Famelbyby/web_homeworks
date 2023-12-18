@@ -115,6 +115,32 @@
     margin: 10px 0px 10px 0px;
 }
 
+.question_likes {
+    margin: 0px 0px 20px 20%;
+}
+
+.question_likes svg {
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.follow {
+    margin: 50px 60px 40px 60px;
+}
+
+.delete_btn {
+    margin-top: 20px;
+}
+
+.answer_likes {
+    margin: 0px 0px 20px 20%;
+}
+
+.answer_likes svg {
+    cursor: pointer;
+    border-radius: 50%;
+}
+
 .likes {
     margin: 0px 0px 20px 20%;
 }
@@ -306,6 +332,7 @@ button#ask_question {
 .profile-img {
     width: 150px;
     height: 150px;
+    border-radius: 50%;
 }
 
 .new_hot_q {

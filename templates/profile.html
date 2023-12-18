@@ -8,7 +8,11 @@
     <div class="profile">
         <div class="row mb-5">
             <div class="col-3">
-                <img src="{% static 'images/acc.png' %}" class="profile-img">
+                {% if profile.avatar %}
+                <img src=" {{profile.avatar.url}} " class="profile-img">
+                {% else %}
+                <img src="../uploads/acc.png" class="profile-img">
+                {% endif %}
             </div>
             {% if request.user.profile != profile %}
             <form method="post" class="col-3">

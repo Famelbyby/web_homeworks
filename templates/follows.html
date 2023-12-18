@@ -17,10 +17,13 @@
             <div class="row">
                 <div class="row mb-5">
                     <div class="image col-3">
-                        <a href="{% url 'profile' profile_id=follow.id %}"><img src="{% static 'images/acc.png' %}" class="profile-img"></a>
-                    </div>
-                    <div class="col-6">
-                        <button type="button" class="btn btn-success">Follow</button>
+                        <a href="{% url 'profile' profile_id=follow.id %}">
+                        {% if follow.avatar %}
+                        <img src="{{follow.avatar.url}}" class="profile-img">
+                        {% else %}
+                        <img src="uploads/acc.png" class="profile-img">
+                        {% endif %}
+                        </a>
                     </div>
                 </div>
             <div class="form-floating mb-4">
