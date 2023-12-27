@@ -9,9 +9,9 @@
         <form method="post" class="mb-2" enctype="multipart/form-data">
             {% csrf_token %}
             {% bootstrap_form form %}
-            <button type="submit" class="btn btn-success">Sign up</button>
+            <button type="submit" class="btn btn-success" style="margin-top: 20px; height: 40px; width: 100px;">Sign up</button>
         </form>
-        <a href="{% url 'login' %}"><button type="button" class="btn btn-success">Or log in</button></a>
+        <a href="{% url 'login' %}"><button type="button" class="btn btn-success" style="margin-top: 20px; height: 40px; width: 100px;">Or log in</button></a>
     </div>
 </div>
 

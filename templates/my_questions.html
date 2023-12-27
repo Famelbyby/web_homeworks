@@ -17,7 +17,13 @@
         <div class="question">
             <div class="row">
                 <div class="col-2" style="text-align: center;">
-                    {% include 'components/likes.html' with profile=request.user.profile rating=question.rating %}
+                    <a href="{% url 'profile' profile_id=request.user.profile.id %}">
+                        {% if profile.avatar %}
+                        <img src=" {{profile.avatar.url}} " alt="Avatar" class="question-img">
+                        {% else %}
+                        <img src=" uploads/acc.png " alt="Avatar" class="question-img">
+                        {% endif %}
+                    </a><br>
                 </div>
                 <div class="col-10">
                     <div class="row">
@@ -25,19 +31,19 @@
                         <a href="{% url 'question' question_id=question.id %}" class="question-title"> {{ question.title }} </a>
                         </div>
                         {% if request.user.profile == question.author_id %}
-                        <a href="{% url 'delete_something' type_query='question' delete_id=question.id%}">
-                            <button type="submit" class="btn btn-danger delete_btn">Delete</button>
-                        </a>
+                        <div class="col-3 delete_question" data-id="{{question.id}}">
+                            <button type="button" class="btn btn-danger delete_btn">Delete</button>
+                        </div>
                         {% endif %}
                     </div>
-                    <div class="descrip mb-4">
+                    <div class="descrip mb-5">
                         {{ question.description }}
                     </div>
                     <div class="tags row">
-                        <div class="col">
+                        <div class="col-8">
                             Answers({{answers|index:forloop.counter0}})
                         </div>
-                        <div class="col">
+                        <div class="col-4">
                             Tags({{ tags|index:forloop.counter0|length }}):
                             {% for t in tags|index:forloop.counter0 %}
                                 <a href="{% url 'tag' tag_name=t %}">{{ t }}</a>

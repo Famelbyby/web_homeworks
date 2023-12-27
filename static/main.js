@@ -47,7 +47,6 @@ for (let q_like of question_likes) {
     svg1.addEventListener('click', () => {
         const formData = new FormData()
         formData.append('question_id', q_like.dataset.id)
-        console.log(q_like.dataset.id)
         formData.append('type_req', 'question')
 
         const request = new Request('/like/', {
@@ -118,6 +117,57 @@ for (let ban of ban_answer) {
                 while (ban.firstChild){
                     ban.removeChild(ban.firstChild)
                 }
+            })
+
+    })
+
+}
+
+const question_delete = document.getElementsByClassName('delete_question')
+for (let q_d of question_delete) {
+    const but_q_d = q_d.children[0]
+    but_q_d.addEventListener('click', () => {
+        const formData = new FormData()
+        formData.append('delete_id', q_d.dataset.id)
+        formData.append('type_query', 'question')
+
+        const request = new Request('/delete/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+
+        fetch(request)
+            .then((response) => response.json())
+            .then((data) => {
+                location.reload();
+            })
+
+    })
+
+}
+
+const answer_delete = document.getElementsByClassName('delete_answer')
+for (let a_d of answer_delete) {
+    const but_a_d = a_d.children[0]
+    but_a_d.addEventListener('click', () => {
+        const formData = new FormData()
+        formData.append('delete_id', a_d.dataset.id)
+        formData.append('type_query', 'answer')
+        const request = new Request('/delete/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+
+        fetch(request)
+            .then((response) => response.json())
+            .then((data) => {
+                location.reload();
             })
 
     })

@@ -22,7 +22,9 @@ urlpatterns = [
     path('follows', views.follows, name='follows'),
     path('like/', views.like, name='like'),
     path('ban_answer/', views.ban_answer, name='ban_answer'),
-    path('delete/<str:type_query>/<int:delete_id>', views.delete_something, name='delete_something')
+    path('delete/', views.delete_something, name='delete_something'),
+    path('give_answer/', views.give_answer, name='give_answer'),
 ]
 
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

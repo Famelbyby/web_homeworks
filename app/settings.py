@@ -1,6 +1,9 @@
+import random
+
+from django.contrib.postgres.search import SearchVector
 from django.contrib.auth import authenticate, login
 from django.forms import model_to_dict
-
+from django.core.cache import cache
 from stackoverflow.models import Profile, Question, Tag, Answer, AnswerLikes, QuestionLikes
 from django.db.models import Count
 from templates.components.forms import LoginForm, RegisterForm, AskQuestion, EditForm, GiveAnswer
@@ -8,6 +11,17 @@ from templates.components.forms import LoginForm, RegisterForm, AskQuestion, Edi
 QUESTIONS_PER_PAGE = 20
 ANSWERS_PER_PAGE = 7
 PROFILE_PER_PAGE = 15
+POPULAR_TAGS_COUNT = 20
+POPULAR_PROFILES_COUNT = 10
+
+
+def all_popular():
+    cache_key_tags = 'popular_tags'
+    tags = cache.get(cache_key_tags)
+    cache_key_profiles = 'popular_profiles'
+    profiles = cache.get(cache_key_profiles)
+    return {'popular_tags': tags,
+            'popular_profiles': profiles}
 
 
 def pages_range(page, pages_count):
@@ -78,14 +92,15 @@ def query_question(request, query_name):
     page = check_page(request)
     if page == -1:
         return {'page': -1}
-    all_ques = Question.objects.filter(title__icontains=query_name)
+    all_ques = Question.objects.annotate(search=SearchVector('title') +
+                            SearchVector('description')).filter(search=query_name)
     count_ques = all_ques.count()
     questions = all_ques[(page - 1) * QUESTIONS_PER_PAGE: page * QUESTIONS_PER_PAGE]
     tags = [list(q.tags.all()) for q in questions]
     answers = list(q.answer_set.count() for q in questions)
     return {'answers': answers, 'tags': tags, 'questions': questions, 'page': page,
             'pages': pages_range(page, (count_ques + QUESTIONS_PER_PAGE - 1) // QUESTIONS_PER_PAGE),
-            'type_sort': f'Query: {query_name}'}
+            'type_sort': f'Query: {query_name}', 'query_question': query_name}
 
 
 def certain_question(request, question_id):
@@ -114,8 +129,7 @@ def give_answer(request, question_id):
             question = Question.objects.get(pk=question_id)
             answer.question = question
             answer.save()
-            return [(question.answer_set.count() + ANSWERS_PER_PAGE - 1) // ANSWERS_PER_PAGE,
-                    answer.id]
+            return answer
     return GiveAnswer()
 
 
@@ -145,7 +159,6 @@ def profile(request, profile_id):
         profile = Profile.objects.get(pk=profile_id)
     except:
         return [-1, -1]
-    print(request.user.profile.follows.filter(pk=profile_id).count() > 0)
     return [profile, request.user.profile.follows.filter(pk=profile_id).count() > 0]
 
 
@@ -204,32 +217,30 @@ def like(request):
         AnswerLikes.objects.toggleLike(request.user, answer)
         answer.rating = AnswerLikes.objects.filter(answer_id=answer).count()
         answer.save()
-        print(answer.rating)
         return answer.rating
     else:
         question_id = request.POST.get('question_id')
-        print(question_id)
         question = Question.objects.get(pk=question_id)
         QuestionLikes.objects.toggleLike(request.user, question)
         question.rating = QuestionLikes.objects.filter(question_id=question).count()
         question.save()
-        print(question.id)
         return question.rating
 
 
 def ban_answer(request):
-    if request.POST.get('type_req') == 'yes':
+    if request.POST.get('type_req', '') == 'yes':
         answer = Answer.objects.get(pk=request.POST.get('answer_id'))
         AnswerLikes.objects.toggleLike(request.user, answer)
         answer.rating = AnswerLikes.objects.filter(answer_id=answer).count()
         answer.save()
-    else:
+    if request.POST.get('type_req', '') == 'no':
         Answer.objects.get(pk=request.POST.get('answer_id')).delete()
     return
 
 
-def delete_something(type_query, delete_id):
-    if type_query == 'answer':
+def delete_something(request):
+    delete_id = request.POST.get('delete_id')
+    if request.POST.get('type_query', '') == 'answer':
         Answer.objects.get(pk=delete_id).delete()
-    if type_query == 'question':
+    if request.POST.get('type_query', '') == 'question':
         Question.objects.get(pk=delete_id).delete()

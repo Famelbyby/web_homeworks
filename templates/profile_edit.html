@@ -12,9 +12,9 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% bootstrap_form form %}
-            <button type="submit" class="btn btn-success">Save</button>
+            <button type="submit" class="btn btn-success" style="margin-top: 20px; height: 40px; width: 100px;">Save</button>
         </form>
-        <a href="{% url 'profile' profile_id=request.user.profile.id %}"><button type="button" class="btn btn-warning go_back">Go back</button></a>
+        <a href="{% url 'profile' profile_id=request.user.profile.id %}"><button type="button" class="btn btn-warning go_back" style="margin-top: 20px; height: 40px; width: 100px;">Go back</button></a>
     </div>
 </div>
 

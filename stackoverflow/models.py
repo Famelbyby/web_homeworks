@@ -96,7 +96,7 @@ class Answer(models.Model):
     description = models.CharField()
     date = models.DateTimeField(default=timezone.now())
     question = models.ForeignKey(Question, on_delete=models.CASCADE, blank=True, null=True)
-    author = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, blank=True, null=True)
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, blank=True, null=True)
     rating = models.IntegerField(default=0)
 
     def __str__(self):

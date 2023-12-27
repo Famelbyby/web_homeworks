@@ -41,13 +41,13 @@
             <input type="text" class="form-control" id="floatingFirstName" value="{{profile.user.first_name}}" maxlength="20" disabled>
             <label for="floatingFirstName">First name</label>
         </div>
-        <div class="form-floating">
+        <div class="form-floating mb-1">
             <input type="text" class="form-control" id="floatingLastName" value="{{profile.user.last_name}}" maxlength="20" disabled>
             <label for="floatingLastName">Last name</label>
         </div>
         {% if request.user.profile == profile %}
-        <div class="col-5 mb-4">
-            <a href="{% url 'profile_edit' %}"><button type="button" class="btn btn-success">Edit</button></a>
+        <div class="col-5">
+            <a href="{% url 'profile_edit' %}"><button type="button" class="btn btn-success" style="height: 40px; width: 100px;">Edit</button></a>
         </div>
         {% endif %}
     </div>

@@ -1,5 +1,4 @@
 {% extends 'layouts/base.html' %}
-
 {% load static %}
 {% load django_bootstrap5 %}
 {% load filters %}
@@ -9,18 +8,18 @@
 <div class="col-8 temp">
 
     <div class="main_question row">
-        <div class="col-3">
+        <div class="col-3" style="text-align: center;">
             <a href="{% url 'profile' profile_id=question.author_id.id %}">
-            {% if question.author_id.avatar %}
-            <img src="{{question.author_id.avatar.url}}" alt="Avatar" class="profile-img">
-            {% else %}
-            <img src="{{MEDIA_URL}}acc.png" alt="Avatar" class="profile-img">
-            {% endif %}
+                {% if question.author_id.avatar %}
+                <img src=" {{question.author_id.avatar.url}} " alt="Avatar" class="profile-img">
+                {% else %}
+                <img src=" {{MEDIA_URL}}acc.png " alt="Avatar" class="profile-img">
+                {% endif %}
             </a>
-            <div class="likes">
+            <div class="question_likes" data-id="{{question.id}}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle plus" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
-                </svg>
+                </svg><br>
                 <span>{{ question.rating }}</span>
             </div>
         </div>
@@ -43,15 +42,13 @@
 
     </div>
 
-    <div class="answers">
+    <div id="my_answer" data-id="{{question.id}}">
+        {% bootstrap_form form %}
+        <button type="button" id="answering" onclick="give_answer();" class="btn btn-success" style="">Answer</button>
+    </div>
 
-        <div class="my_answer">
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <button type="submit">Answer</button>
-            </form>
-        </div>
+
+    <div class="answers" id="answers">
 
         {% for answer_item in answers %}
 
@@ -73,21 +70,19 @@
                     </div>
                 </div>
                 <div class="col-10">
-                    <div class="row">
+                    <div class="row mt-3 mb-3">
                         <div class="col-9">
                             {{ answer_item.author }}
                         </div>
                         {% if request.user.profile == answer_item.author %}
-                        <a href="{% url 'delete_something' type_query='answer' delete_id=answer_item.id%}">
-                            <button type="submit" class="btn btn-danger delete_btn">Delete</button>
-                        </a>
+                        <div class="col-3 delete_answer" data-id="{{answer_item.id}}">
+                            <button type="button" class="btn btn-danger delete_btn">Delete</button>
+                        </div>
                         {% endif %}
                     </div>
-                    <div class="row">
-                        <div class="explain">
-                            {{ answer_item.description }}
-                         </div>
-                    </div>
+                    <div class="explain mb-5">
+                        {{ answer_item.description }}
+                     </div>
                     {% if can_banned|index:forloop.counter0 %}
                     <div class="row helping">
                     </div>
@@ -107,5 +102,80 @@
     {% include 'components/paginatePages.html' %}
 
 </div>
+<script src="https://unpkg.com/centrifuge@5.0.1/dist/centrifuge.js"></script>
+<script type="text/javascript">
 
+    function give_answer(){
+        const my_answer = document.getElementById('my_answer')
+        const description = document.getElementById('id_description')
+
+        const formData = new FormData()
+        formData.append('question_id', my_answer.dataset.id);
+        formData.append('description', description.value);
+
+        const request = new Request('/give_answer/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+
+        fetch(request)
+            .then((response) => response.json())
+    }
+
+    const container = document.getElementById('answers');
+
+    const centrifuge = new Centrifuge("{{centrifugo.ws_url}}", {
+    token: "{{centrifugo.token}}"
+    });
+
+    centrifuge.on('connecting', function (ctx) {
+    console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
+    }).on('connected', function (ctx) {
+    console.log(`connected over ${ctx.transport}`);
+    }).on('disconnected', function (ctx) {
+    console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
+    }).connect();
+
+    const sub = centrifuge.newSubscription("{{centrifugo.channel}}");
+
+    sub.on('publication', function (ctx) {
+    console.log(ctx);
+    console.log(ctx.data.author_id);
+    container.innerHTML = `<div class="answer" id="${ctx.data.answer_id}">
+            <div class="row">
+                <div class="col-2" style="text-align: center;">
+                    <a href="http://127.0.0.1:8000/profile/${ctx.data.author_id}">
+                        <img src="../uploads/acc.png" alt="Avatar" class="question-img">
+                    </a><br>
+                </div>
+                <div class="col-10">
+                    <div class="row mt-3 mb-3">
+                        <div class="col-9">
+                            ${ctx.data.author}
+                        </div>
+                        {% if request.user.profile == answer_item.author %}
+                        <div class="col-3 delete_answer" data-id="${ctx.data.answer_id}">
+                            <button type="button" class="btn btn-danger delete_btn">Delete</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="explain mb-5">
+                        ${ctx.data.description}
+                     </div>
+                </div>
+            </div>
+        </div>` + container.innerHTML;
+    }).on('subscribing', function (ctx) {
+    console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
+    }).on('subscribed', function (ctx) {
+    console.log('subscribed', ctx);
+    }).on('unsubscribed', function (ctx) {
+    console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+    }).subscribe();
+
+
+</script>
 {% endblock %}

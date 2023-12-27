@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'stackoverflow',
     'app',
     'django_bootstrap5'
@@ -119,15 +120,28 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+#STATICFILES_DIRS = [
+    #BASE_DIR / 'static'
+#]
 
 MEDIA_ROOT = BASE_DIR / 'uploads'
 MEDIA_URL = '/uploads/'
+
+CENTRIFUGO_TOKEN_HMAC_SECRET_KEY = "22cf4b0a-0ce1-49e5-ad72-1ba72cba2391"
+CENTRIFUGO_WS_URL = "ws://127.0.0.1:8010/connection/websocket"
+CENTRIFUGO_API_URL = "http://127.0.0.1:8010/api"
+CENTRIFUGO_API_KEY = "9264b9df-c26d-4eab-9951-0879c1a781c0"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/home/leshka/django_cache",
+    }
+}

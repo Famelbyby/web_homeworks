@@ -39,7 +39,10 @@ class Command(BaseCommand):
         print('Generate tags?')
         if input() == 'yes':
             for i in range(1, ratio + 1):
-                Tag.objects.create(tag_name=get_rand_str(1, 4, False))
+                s = get_rand_str(5, 8, False)
+                while Tag.objects.filter(tag_name=s).count() != 0:
+                    s = get_rand_str(5, 8, False)
+                Tag.objects.create(tag_name=s)
             print('Created tags')
         print('Generate questions?')
         if input() == 'yes':
@@ -76,27 +79,37 @@ class Command(BaseCommand):
         if input() == 'yes':
             answers = Answer.objects.all()
             for u in User.objects.all():
-                for i in range(300):
-                    AnswerLikes.objects.toggleLike(user_id=u, answer_id=answers[i])
+                for i in range(30):
+                    if AnswerLikes.objects.filter(user_id=i, answer_id=answers[i]).count() == 0:
+                        AnswerLikes.objects.toggleLike(user_id=u, answer_id=answers[i])
             print('Created answerlikes')
         print('Generate questionlikes?')
         if input() == 'yes':
             questions = Question.objects.all()
             for u in User.objects.all():
-                for i in range(300):
-                    QuestionLikes.objects.toggleLike(user_id=u, question_id=questions[i])
+                for i in range(100):
+                    if QuestionLikes.objects.filter(user_id=u, question_id=questions[i]).count() == 0:
+                        QuestionLikes.objects.toggleLike(user_id=u, question_id=questions[i])
             print('Created questionlikes')
         print('Correct questions rating?')
         if input() == 'yes':
+            i = 0
             for q in Question.objects.all():
                 q.rating = QuestionLikes.objects.filter(question_id=q).count()
                 q.save()
+                if i % 10000 == 0:
+                    print(i)
+                i += 1
             print('Ratings corrected')
         print('Correct answers rating?')
         if input() == 'yes':
+            i = 0
             for a in Answer.objects.all():
                 a.rating = AnswerLikes.objects.filter(answer_id=a).count()
                 a.save()
+                if i % 10000 == 0:
+                    print(i)
+                i += 1
             print('Ratings corrected')
         print('Correct date?')
         if input() == 'yes':
