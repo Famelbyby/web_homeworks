@@ -104,7 +104,7 @@ class AskQuestion(forms.ModelForm):
 
 
 class GiveAnswer(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea)
+    description = forms.CharField(widget=forms.Textarea, required=True, min_length=1)
 
     class Meta:
         model = Answer
